@@ -1,32 +1,30 @@
 import jdk.internal.dynalink.support.ClassLoaderGetterContextProvider;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MagicCounter implements Counter {
 
+    private Map<Long, Long> map = new HashMap<>();
+
     @Override
     public void increment() {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("D:\\студентФИВТ\\Курсы СберТех\\multiProc\\counterlab-master\\src\\main\\resource\\value.txt"));
-            long value = getValue();
-            value += 1;
-            writer.write(String.valueOf(value));
-            writer.close();
-        } catch (IOException exp) {
-            exp.printStackTrace();
+        Long threadId = Thread.currentThread().getId();
+        if (!map.containsKey(threadId)) {
+            map.put(threadId, 0L);
         }
+        Long value = map.get(threadId);
+        value++;
+        map.put(threadId, value);
     }
 
     @Override
     public long getValue() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("D:\\студентФИВТ\\Курсы СберТех\\multiProc\\counterlab-master\\src\\main\\resource\\value.txt"));
-            long value = Long.parseLong(reader.readLine());
-            reader.close();
-            return value;
-        } catch (IOException exp) {
-            exp.printStackTrace();
-            return 0;
+        long quantity = 0;
+        for (Map.Entry<Long, Long> pair : map.entrySet()) {
+            quantity += pair.getValue();
         }
+        return quantity;
     }
 }

@@ -20,7 +20,7 @@ public class CounterTest {
     public void testSequentialExecution() throws ExecutionException, InterruptedException {
         ExecutorService executors = Executors.newFixedThreadPool(10);
 
-        int incrementCallsCount = 1000000;
+        int incrementCallsCount = 1_000_000;
 
         List<Future> futures = range(0, incrementCallsCount)
                 .mapToObj(i -> executors.submit(incrementRunnable()))
